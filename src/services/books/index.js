@@ -2,6 +2,7 @@ const express = require("express");
 const uniqid = require("uniqid");
 const { check, validationResult } = require("express-validator");
 const { getBooks, writeBooks } = require("../../fsUtilities");
+const e = require("express");
 
 const booksRouter = express.Router();
 
@@ -172,6 +173,36 @@ booksRouter.get("/:asin/comments", async (req, res, next) => {
         res.send(books[indexOfBook].comments);
       } else {
         res.send("No comments found for that book");
+      }
+    } else {
+      res.send("No book with that asin found");
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+booksRouter.delete("/:asin/comments/:commentId", async (req, res, next) => {
+  try {
+    const books = await getBooks();
+    const indexOfBook = books.findIndex((book) => book.asin === req.params.asin);
+
+    if (indexOfBook !== -1) {
+      if (books[indexOfBook].comments) {
+        const indexOfComment = books[indexOfBook].comments.findIndex((comment) => comment._id === req.params.commentId);
+        if (indexOfComment !== -1) {
+          const filteredComments = books[indexOfBook].comments.filter(
+            (comment) => comment._id !== req.params.commentId
+          );
+          books[indexOfBook].comments = filteredComments;
+          await writeBooks(books);
+          res.send("Comment successfully removed");
+        } else {
+          res.send("Comment with that ID does not exist within the provided asin");
+        }
+      } else {
+        res.send("No comments found for the provided asin");
       }
     } else {
       res.send("No book with that asin found");
