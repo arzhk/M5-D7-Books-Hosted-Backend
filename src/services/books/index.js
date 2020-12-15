@@ -157,8 +157,29 @@ booksRouter.post(
       }
     } catch (error) {
       console.log(error);
+      next(error);
     }
   }
 );
+
+booksRouter.get("/:asin/comments", async (req, res, next) => {
+  try {
+    const books = await getBooks();
+    const indexOfBook = books.findIndex((book) => book.asin === req.params.asin);
+
+    if (indexOfBook !== -1) {
+      if (books[indexOfBook].comments) {
+        res.send(books[indexOfBook].comments);
+      } else {
+        res.send("No comments found for that book");
+      }
+    } else {
+      res.send("No book with that asin found");
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 
 module.exports = booksRouter;
