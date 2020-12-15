@@ -17,7 +17,7 @@ server.use(express.json());
     ? [process.env.FE_URL_PROD]
     : [process.env.FE_URL_DEV] */
 
-const whiteList = [FE_URL_DEV, FE_URL_PROD];
+const whiteList = [process.env.FE_URL_DEV, process.env.FE_URL_PROD];
 
 const corsOptions = {
   origin: function (origin, callback) {
