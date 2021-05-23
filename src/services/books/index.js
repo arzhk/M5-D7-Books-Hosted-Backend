@@ -2,7 +2,6 @@ const express = require("express");
 const uniqid = require("uniqid");
 const { check, validationResult } = require("express-validator");
 const { getBooks, writeBooks } = require("../../fsUtilities");
-const e = require("express");
 
 const booksRouter = express.Router();
 
